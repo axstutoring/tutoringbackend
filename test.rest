@@ -1,0 +1,28 @@
+GET /feed HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+###
+
+POST /feed/new HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+    "student": "Aaron Kwon",
+    "email": "kaiway@ucla.edu",
+    "phone": 9098569901,
+    "request": "",
+    "tutor": "Kevin Tang",
+    "subject": "CS32",
+    "date": "2/9/2023"
+}
+
+###
+
+PUT /feed HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+}
