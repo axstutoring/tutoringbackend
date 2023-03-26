@@ -128,13 +128,14 @@ function checkDateRange(bookDate, days)
 
 function user(email)
 {
+    email = email.toLowerCase();
     if (email.includes("@g.ucla.edu"))
     {
-        return ((email.replace("@g.ucla.edu", "")).toLowerCase());
+        return (email.replace("@g.ucla.edu", ""));
     }
     else if (email.includes("@ucla.edu"))
     {
-        return ((email.replace("@ucla.edu", "")).toLowerCase());
+        return (email.replace("@ucla.edu", ""));
     }
     return "";
 }
