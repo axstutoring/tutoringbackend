@@ -491,7 +491,7 @@ app.get('/find/appointment', async (req, res) => {
 
     for (let i = 0; i < feed.length; i++)
     {
-        if ((feed[i].email === username + "@ucla.edu") || (feed[i].email === username + "@g.ucla.edu"))
+        if ((feed[i].email.toLowerCase() === username + "@ucla.edu") || (feed[i].email.toLowerCase() === username + "@g.ucla.edu"))
         {
             let hour = feed[i].date.substring(19, 24);
             if (feed[i].date.length === 26)
