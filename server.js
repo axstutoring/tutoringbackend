@@ -109,7 +109,7 @@ function dateEncoder(bookDate)  //compresses the date into string of numbers. "T
     return dateProcessor;
 }
 
-function checkDateRange(bookDate, days)
+function checkDateRange(bookDate, days) //returns true if current time is outside the range of the bookDate + days
 {
     const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -123,7 +123,29 @@ function checkDateRange(bookDate, days)
         hour = hourNumber.toString() + hour.substring(2, 5);
     }
 
-    return ((Date.parse(dateProcessor + ' ' + hour) + days*86400000) < Date.now())
+    let dayLightSavings = false;
+    const currentDate = new Date();
+    if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
+    {
+        dayLightSavings = true;
+    }
+    else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
+    {
+        dayLightSavings = true;
+    }
+    else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
+    {
+        dayLightSavings = true;
+    }
+
+    if (dayLightSavings)
+    {
+        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
+    }
+    else
+    {
+        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
+    }
 }
 
 function user(email)
@@ -505,7 +527,23 @@ app.get('/find/appointment', async (req, res) => {
             }
             const dateTranslator = Date.parse(feed[i].date.substring(4, 15) + ' ' + hour);
             const todayDate = Date.now();
-            if (dateTranslator > todayDate)
+
+            let dayLightSavings = false;
+            const currentDate = new Date();
+            if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
+            {
+                dayLightSavings = true;
+            }
+            else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
+            {
+                dayLightSavings = true;
+            }
+            else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
+            {
+                dayLightSavings = true;
+            }
+            
+            if ((dayLightSavings && (dateTranslator + 25200000) > todayDate) || (!dayLightSavings && (dateTranslator + 28800000) > todayDate))
             {
                 for (let j = 0; j < feed2.length; j++)
                 {
@@ -525,7 +563,7 @@ app.get('/find/appointment', async (req, res) => {
                     }
                 }
             }
-            if ((Number(dateTranslator) <= Number(todayDate)))
+            else
             {
                 for (let j = 0; j < feed2.length; j++)
                 {
