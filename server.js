@@ -381,7 +381,7 @@ app.get('/tutorlist', async (req, res) => {
     let returnArray = new Array;
     for (let i = 0; i < feed.length; i++)
     {
-        if ((feed[i].subject.includes(req.query.series)))
+        if ((feed[i].subject.includes(req.query.series)) && feed[i].maximumHours > 0)
         {
             returnArray.push(feed[i].member);
         }
@@ -747,6 +747,21 @@ app.get('/datelist', async (req, res) => {
 
     let dateObject = new Date();
 
+    let dayLightSavings = false;
+    const currentDate = new Date();
+    if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
+    {
+        dayLightSavings = true;
+    }
+    else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
+    {
+        dayLightSavings = true;
+    }
+    else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
+    {
+        dayLightSavings = true;
+    }
+
     for (let i = dateObject.getDay() + 1; i < 7; i++)
     {
         for (let j = 0; j < 48; j++)
@@ -785,7 +800,11 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if ((dayOffStart > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd))
+                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    {
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                    }
+                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
@@ -794,7 +813,11 @@ app.get('/datelist', async (req, res) => {
                 else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if ((dayOffStart > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd))
+                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    {
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                    }
+                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
@@ -842,8 +865,11 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    //console.log(futureDate.toDateString() + " at " + timeTable[j]);
-                    if ((dayOffStart > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd))
+                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    {
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                    }
+                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
@@ -851,7 +877,11 @@ app.get('/datelist', async (req, res) => {
                 else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if ((dayOffStart > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd))
+                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    {
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                    }
+                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
