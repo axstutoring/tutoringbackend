@@ -968,7 +968,7 @@ app.post('/request/new', async (req, res) => {
             //console.log("Sent", info.response);
         });
     })
-
+    /*
     const message1 = "Dear " + req.body.student + ",\n\nThis is a confirmation of your request for tutoring with " 
     + req.body.tutor + " on " + req.body.date + " for " + req.body.subject + ". Please email them" +  
     " the materials that you would like to go over 24 hours before the scheduled appointment time at " + memberEmail +
@@ -996,6 +996,7 @@ app.post('/request/new', async (req, res) => {
             //console.log("Sent", info.response);
         });
     })
+    */
 
     const feed1 = await Email.find();
 

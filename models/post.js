@@ -11,8 +11,8 @@ const PostSchema = new Schema({
     required: true
   },
   phone: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ""
   },
   subject: {
     type: String,
