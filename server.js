@@ -151,6 +151,7 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
 function user(email)
 {
     email = email.toLowerCase();
+    email = email.split(' ').join('');
     if (email.includes("@g.ucla.edu"))
     {
         return (email.replace("@g.ucla.edu", ""));
