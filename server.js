@@ -940,7 +940,7 @@ app.post('/request/new', async (req, res) => {
         timestamp: Date(Date.now()),
     });
     
-    const message = "Dear " + req.body.tutor + ",\n\nYou have received a new appointment with " + req.body.student + ".\nBelow are the details:\n"
+    const message = "Dear " + req.body.tutor + ",\n\nYou have received a new appointment with " + req.body.student + ".\n\nBelow are the details:\n"
     + "Student: " + req.body.student + "\n"
     + "Email: " + req.body.email + "\n"
     + "Subject: " + req.body.subject + "\n"
@@ -948,6 +948,7 @@ app.post('/request/new', async (req, res) => {
     + "Phone: " + req.body.phone + "\n"
     + "Request: " + req.body.request + "\n"
     + "\nSincerely,\n" + tutoringChairs;
+    + "\n\n[The student was given your contact information and should be reaching out by email no less than 24 hours before the scheduled appointment.]"
 
     const options = {
         from: "axstutoring@zohomail.com",
