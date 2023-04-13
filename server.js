@@ -803,12 +803,12 @@ app.get('/datelist', async (req, res) => {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
                     if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                         
                     }
                     else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                     //console.log(futureDate.toDateString() + " at " + timeTable[j]);
                 }
@@ -817,11 +817,11 @@ app.get('/datelist', async (req, res) => {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
                     if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                     else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                 }
             }
@@ -869,11 +869,11 @@ app.get('/datelist', async (req, res) => {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
                     if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                     else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                 }
                 else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
@@ -881,11 +881,11 @@ app.get('/datelist', async (req, res) => {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
                     if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                     else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                     }
                 }
             }
