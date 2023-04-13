@@ -801,26 +801,27 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
+                        
                     }
-                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
+                    else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
                     //console.log(futureDate.toDateString() + " at " + timeTable[j]);
                 }
                 else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
-                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
+                    else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
                 }
             }
@@ -866,25 +867,25 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
-                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
+                    else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
                 }
                 else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart + 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 25200000)))
+                    if (dayLightSavings && ((dayOffStart - 25200000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 25200000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
-                    else if (!dayLightSavings && ((dayOffStart + 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd + 28800000)))
+                    else if (!dayLightSavings && ((dayOffStart - 28800000 > Date.parse(dateObject)) || (Date.parse(dateObject) > dayOffEnd - 28800000)))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j] + " (" + k.toString() + " days)");
                     }
                 }
             }
@@ -948,7 +949,7 @@ app.post('/request/new', async (req, res) => {
     + "Phone: " + req.body.phone + "\n"
     + "Request: " + req.body.request + "\n"
     + "\nSincerely,\n" + tutoringChairs + "\n"
-    + "\n[The student was given your contact information and should be reaching out by email no less than 24 hours before the scheduled appointment.]";
+    + "\n[The student was given your contact information and should be reaching out by email no less than 24 hours before the scheduled appointment]";
 
     const options = {
         from: "axstutoring@zohomail.com",
