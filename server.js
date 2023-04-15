@@ -124,7 +124,7 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
     }
 
     let dayLightSavings = false;
-    const currentDate = new Date();
+    const currentDate = new Date(Date.now() - 25200000);
     if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
     {
         dayLightSavings = true;
@@ -177,7 +177,6 @@ app.get('/checkemail', async (req, res) => {
         {
             let updatedString = "";
             let bookingsThisWeek = 0;
-            const todayDate = new Date();
             for (let j = 0; j < feed[i].bookings.length; j+= 13)
             {
                 if (checkDateRange(feed[i].bookings.substring(j, j + 13), 21))
@@ -530,7 +529,7 @@ app.get('/find/appointment', async (req, res) => {
             const todayDate = Date.now();
 
             let dayLightSavings = false;
-            const currentDate = new Date();
+            const currentDate = new Date(Date.now() - 25200000);
             if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
             {
                 dayLightSavings = true;
@@ -750,7 +749,7 @@ app.get('/datelist', async (req, res) => {
     let additionalArray = [];
 
     let dayLightSavings = false;
-    const currentDate = new Date();
+    const currentDate = new Date(Date.now() - 25200000);
     if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
     {
         dayLightSavings = true;
@@ -789,7 +788,14 @@ app.get('/datelist', async (req, res) => {
                 }
                 let dayOfWeek = i;
                 //console.log(i);
-                dateObject = new Date();
+                if (dayLightSavings)
+                {
+                    dateObject = new Date(Date.now() - 25200000);
+                }
+                else
+                {
+                    dateObject = new Date(Date.now() - 28800000);
+                }
                 //console.log(dateObject);
                 //console.log(dayOfWeek);
                 //console.log(currentDate.getDay());
@@ -830,8 +836,6 @@ app.get('/datelist', async (req, res) => {
         }
     }
 
-    dateObject = new Date();
-
     for (let i = 0; i < dateObject.getDay() + 1; i++)
     {
         for (let j = 0; j < 48; j++)
@@ -857,7 +861,14 @@ app.get('/datelist', async (req, res) => {
                 }
                 let dayOfWeek = i;
                 //console.log(i);
-                const dateObject = new Date();
+                if (dayLightSavings)
+                {
+                    dateObject = new Date(Date.now() - 25200000);
+                }
+                else
+                {
+                    dateObject = new Date(Date.now() - 28800000);
+                }
                 //console.log(dayOfWeek);
                 //console.log(currentDate.getDay());
                 if (dateObject.getDay() >= dayOfWeek)
