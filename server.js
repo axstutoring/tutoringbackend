@@ -745,7 +745,7 @@ app.get('/datelist', async (req, res) => {
 
     //console.log(week);
 
-    let dateObject = new Date();
+    let loopObject = new Date();
     let additionalArray = [];
 
     let dayLightSavings = false;
@@ -763,7 +763,16 @@ app.get('/datelist', async (req, res) => {
         dayLightSavings = true;
     }
 
-    for (let i = dateObject.getDay() + 1; i < 7; i++)
+    if (dayLightSavings)
+    {
+        loopObject = new Date(Date.now() - 25200000);
+    }
+    else
+    {
+        loopObject = new Date(Date.now() - 28800000);
+    }
+
+    for (let i = loopObject.getDay() + 1; i < 7; i++)
     {
         for (let j = 0; j < 48; j++)
         {
@@ -788,6 +797,7 @@ app.get('/datelist', async (req, res) => {
                 }
                 let dayOfWeek = i;
                 //console.log(i);
+                let dateObject = new Date();
                 if (dayLightSavings)
                 {
                     dateObject = new Date(Date.now() - 25200000);
@@ -836,7 +846,16 @@ app.get('/datelist', async (req, res) => {
         }
     }
 
-    for (let i = 0; i < dateObject.getDay() + 1; i++)
+    if (dayLightSavings)
+    {
+        loopObject = new Date(Date.now() - 25200000);
+    }
+    else
+    {
+        loopObject = new Date(Date.now() - 28800000);
+    }
+
+    for (let i = 0; i < loopObject.getDay() + 1; i++)
     {
         for (let j = 0; j < 48; j++)
         {
@@ -861,6 +880,7 @@ app.get('/datelist', async (req, res) => {
                 }
                 let dayOfWeek = i;
                 //console.log(i);
+                let dateObject = new Date();
                 if (dayLightSavings)
                 {
                     dateObject = new Date(Date.now() - 25200000);
