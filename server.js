@@ -723,6 +723,9 @@ app.get('/datelist', async (req, res) => {
                     savedString += bookingString;
                 }
             }
+
+            //console.log(comparisonString);
+            //console.log(savedString);
             
             for (let j = 1; j < comparisonString.length; j+=13)
             {
@@ -745,7 +748,7 @@ app.get('/datelist', async (req, res) => {
 
     //console.log(week);
 
-    let loopObject = new Date();
+    let loopObject = new Date(Date.now() - 25200000);
     let additionalArray = [];
 
     let dayLightSavings = false;
@@ -763,11 +766,7 @@ app.get('/datelist', async (req, res) => {
         dayLightSavings = true;
     }
 
-    if (dayLightSavings)
-    {
-        loopObject = new Date(Date.now() - 25200000);
-    }
-    else
+    if (!dayLightSavings)
     {
         loopObject = new Date(Date.now() - 28800000);
     }
@@ -791,66 +790,59 @@ app.get('/datelist', async (req, res) => {
                         break;
                     }
                 }
-                if (check)
+                if (!check)
                 {
-                    break;
-                }
-                let dayOfWeek = i;
-                //console.log(i);
-                let dateObject = new Date();
-                if (dayLightSavings)
-                {
-                    dateObject = new Date(Date.now() - 25200000);
-                }
-                else
-                {
-                    dateObject = new Date(Date.now() - 28800000);
-                }
-                //console.log(dateObject);
-                //console.log(dayOfWeek);
-                //console.log(currentDate.getDay());
-                if (dateObject.getDay() >= dayOfWeek)
-                {
-                    dayOfWeek += 7;
-                }
-                //console.log(dayOfWeek);
-                //console.log(currentDate.getDay());
-                if (dayOfWeek - dateObject.getDay() > 2)
-                {
-                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    additionalArray.push(Date.parse(dateObject));
-                    if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    let dayOfWeek = i;
+                    //console.log(i);
+                    let dateObject = new Date(Date.now() - 25200000);
+                    if (!dayLightSavings)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                        
+                        dateObject = new Date(Date.now() - 28800000);
                     }
-                    else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    //console.log(dateObject);
+                    //console.log(dayOfWeek);
+                    //console.log(currentDate.getDay());
+                    if (dateObject.getDay() >= dayOfWeek)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dayOfWeek += 7;
                     }
-                    //console.log(futureDate.toDateString() + " at " + timeTable[j]);
-                }
-                else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                {
-                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    //console.log(dayOfWeek);
+                    //console.log(currentDate.getDay());
+                    if (dayOfWeek - dateObject.getDay() > 2)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                        additionalArray.push(Date.parse(dateObject));
+                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            
+                        }
+                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
+                        //console.log(futureDate.toDateString() + " at " + timeTable[j]);
                     }
-                    else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
+                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
                     }
                 }
             }
         }
     }
 
-    if (dayLightSavings)
-    {
-        loopObject = new Date(Date.now() - 25200000);
-    }
-    else
+
+    loopObject = new Date(Date.now() - 25200000);
+    if (!dayLightSavings)
     {
         loopObject = new Date(Date.now() - 28800000);
     }
@@ -874,52 +866,47 @@ app.get('/datelist', async (req, res) => {
                         break;
                     }
                 }
-                if (check)
+                if (!check)
                 {
-                    break;
-                }
-                let dayOfWeek = i;
-                //console.log(i);
-                let dateObject = new Date();
-                if (dayLightSavings)
-                {
-                    dateObject = new Date(Date.now() - 25200000);
-                }
-                else
-                {
-                    dateObject = new Date(Date.now() - 28800000);
-                }
-                //console.log(dayOfWeek);
-                //console.log(currentDate.getDay());
-                if (dateObject.getDay() >= dayOfWeek)
-                {
-                    dayOfWeek += 7;
-                }
-                //console.log(dayOfWeek);
-                //console.log(currentDate.getDay());
-                if (dayOfWeek - dateObject.getDay() > 2)
-                {
-                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    additionalArray.push(Date.parse(dateObject));
-                    if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    let dayOfWeek = i;
+                    //console.log(i);
+                    let dateObject = new Date(Date.now() - 25200000);
+                    if (!dayLightSavings)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dateObject = new Date(Date.now() - 28800000);
                     }
-                    else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    //console.log(dayOfWeek);
+                    //console.log(currentDate.getDay());
+                    if (dateObject.getDay() >= dayOfWeek)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dayOfWeek += 7;
                     }
-                }
-                else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                {
-                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    //console.log(dayOfWeek);
+                    //console.log(currentDate.getDay());
+                    if (dayOfWeek - dateObject.getDay() > 2)
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                        additionalArray.push(Date.parse(dateObject));
+                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
+                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
                     }
-                    else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                    else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                     {
-                        returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
+                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        {
+                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                        }
                     }
                 }
             }
