@@ -808,7 +808,7 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    additionalArray.push(dateObject.parse());
+                    additionalArray.push(Date.parse(dateObject));
                     if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
@@ -880,7 +880,7 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    additionalArray.push(dateObject.parse());
+                    additionalArray.push(Date.parse(dateObject));
                     if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
