@@ -801,6 +801,7 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                    console.log(Date.parse(dateObject));
                     if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject) - 25200000) || (Date.parse(dateObject) - 25200000 >= dayOffEnd)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
