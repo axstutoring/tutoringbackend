@@ -747,6 +747,7 @@ app.get('/datelist', async (req, res) => {
     //console.log(week);
 
     let dateObject = new Date();
+    let additionalArray = [];
 
     let dayLightSavings = false;
     const currentDate = new Date();
@@ -801,7 +802,7 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    console.log(Date.parse(dateObject));
+                    additionalArray.push(Date.parse(dateObject));
                     if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject) - 25200000) || (Date.parse(dateObject) - 25200000 >= dayOffEnd)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
@@ -868,7 +869,7 @@ app.get('/datelist', async (req, res) => {
                 if (dayOfWeek - dateObject.getDay() > 2)
                 {
                     dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    console.log(Date.parse(dateObject));
+                    additionalArray.push(Date.parse(dateObject));
                     if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject) - 25200000) || (Date.parse(dateObject) - 25200000 >= dayOffEnd)))
                     {
                         returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
