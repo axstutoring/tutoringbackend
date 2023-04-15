@@ -901,7 +901,11 @@ app.get('/datelist', async (req, res) => {
         returnArray = [];
     }
 
-    res.json(returnArray);
+    let finalArray = [];
+    finalArray.push(returnArray);
+    finalArray.push(additionalArray);
+
+    res.json(finalArray);
 })
 
 app.post('/request/new', async (req, res) => {
