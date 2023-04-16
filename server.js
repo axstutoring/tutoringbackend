@@ -109,36 +109,44 @@ function dateEncoder(bookDate)  //compresses the date into string of numbers. "T
     return dateProcessor;
 }
 
+function checkDaylight()    //return true if it is currently daylight savings time
+{
+    const currentDate = new Date(Date.now() - 25200000);
+    if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
+    {
+        return true;
+    }
+    else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
+    {
+        return true;
+    }
+    else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
+    {
+        return true;
+    }
+    return false;
+}
+
 function checkDateRange(bookDate, days) //returns true if current time is outside the range of the bookDate + days
 {
+    console.log(bookDate);
     const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     dateProcessor = monthList[Number(bookDate[8] + bookDate[9]) - 1] + ' ' + bookDate[10] + bookDate[11] + ' '
     + bookDate[4] + bookDate[5] + bookDate[6] + bookDate[7];
 
     let hour = timeTable[Number(bookDate[2] + bookDate[3])];
+    if (hour.length === 7)
+    {
+        hour = '0' + hour;
+    }
     if (hour.substring(hour.length - 2, hour.length) === "PM" && hour.substring(0, 2) !== "12")
     {
         let hourNumber = Number(hour.substring(0, 2)) + 12;
         hour = hourNumber.toString() + hour.substring(2, 5);
     }
 
-    let dayLightSavings = false;
-    const currentDate = new Date(Date.now() - 25200000);
-    if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
-    {
-        dayLightSavings = true;
-    }
-    else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
-    {
-        dayLightSavings = true;
-    }
-    else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
-    {
-        dayLightSavings = true;
-    }
-
-    if (dayLightSavings)
+    if (checkDaylight())
     {
         return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
     }
@@ -150,8 +158,7 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
 
 function user(email)
 {
-    email = email.toLowerCase();
-    email = email.split(' ').join('');
+    email = email.toLowerCase().split(' ').join('');
     if (email.includes("@g.ucla.edu"))
     {
         return (email.replace("@g.ucla.edu", ""));
@@ -509,11 +516,9 @@ app.get('/find/appointment', async (req, res) => {
     let upcomingAppointment = [];
     let pastAppointment = [];
 
-    let username = user(req.query.email);
-
     for (let i = 0; i < feed.length; i++)
     {
-        if ((feed[i].email.toLowerCase() === username + "@ucla.edu") || (feed[i].email.toLowerCase() === username + "@g.ucla.edu"))
+        if (user(feed[i].email) === user(req.query.email))
         {
             let hour = feed[i].date.substring(19, 24);
             if (feed[i].date.length === 26)
@@ -528,20 +533,7 @@ app.get('/find/appointment', async (req, res) => {
             const dateTranslator = Date.parse(feed[i].date.substring(4, 15) + ' ' + hour);
             const todayDate = Date.now();
 
-            let dayLightSavings = false;
-            const currentDate = new Date(Date.now() - 25200000);
-            if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
-            {
-                dayLightSavings = true;
-            }
-            else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
-            {
-                dayLightSavings = true;
-            }
-            else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
-            {
-                dayLightSavings = true;
-            }
+            const dayLightSavings = checkDaylight();
             
             if ((dayLightSavings && (dateTranslator + 25200000) > todayDate) || (!dayLightSavings && (dateTranslator + 28800000) > todayDate))
             {
@@ -748,24 +740,9 @@ app.get('/datelist', async (req, res) => {
 
     //console.log(week);
 
+    const dayLightSavings = checkDaylight();
+
     let loopObject = new Date(Date.now() - 25200000);
-    let additionalArray = [];
-
-    let dayLightSavings = false;
-    const currentDate = new Date(Date.now() - 25200000);
-    if (currentDate.getMonth() > 2 && currentDate.getMonth() < 10)
-    {
-        dayLightSavings = true;
-    }
-    else if (currentDate.getMonth() === 2 && (currentDate.getDate() - currentDate.getDay() > 7))
-    {
-        dayLightSavings = true;
-    }
-    else if (currentDate.getMonth() === 10 && (currentDate.getDate() - currentDate.getDay() <= 0))
-    {
-        dayLightSavings = true;
-    }
-
     if (!dayLightSavings)
     {
         loopObject = new Date(Date.now() - 28800000);
@@ -811,13 +788,7 @@ app.get('/datelist', async (req, res) => {
                     if (dayOfWeek - dateObject.getDay() > 2)
                     {
                         dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        additionalArray.push(Date.parse(dateObject));
-                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
-                        {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                            
-                        }
-                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                         {
                             returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                         }
@@ -826,11 +797,7 @@ app.get('/datelist', async (req, res) => {
                     else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                     {
                         dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
-                        {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                        }
-                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                         {
                             returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                         }
@@ -886,12 +853,7 @@ app.get('/datelist', async (req, res) => {
                     if (dayOfWeek - dateObject.getDay() > 2)
                     {
                         dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        additionalArray.push(Date.parse(dateObject));
-                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
-                        {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                        }
-                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                         {
                             returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                         }
@@ -899,11 +861,7 @@ app.get('/datelist', async (req, res) => {
                     else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                     {
                         dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if (dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
-                        {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                        }
-                        else if (!dayLightSavings && ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd)))
+                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                         {
                             returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
                         }
@@ -919,11 +877,7 @@ app.get('/datelist', async (req, res) => {
         returnArray = [];
     }
 
-    let finalArray = [];
-    finalArray.push(returnArray);
-    finalArray.push(additionalArray);
-
-    res.json(finalArray);
+    res.json(returnArray);
 })
 
 app.post('/request/new', async (req, res) => {
