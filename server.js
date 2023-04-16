@@ -785,21 +785,24 @@ app.get('/datelist', async (req, res) => {
                     }
                     //console.log(dayOfWeek);
                     //console.log(currentDate.getDay());
-                    if (dayOfWeek - dateObject.getDay() > 2)
+                    if (checkDateRange(dateEncoder(dateObject.toDateString() + " at " + timeTable[j]), -7))
                     {
-                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                        if (dayOfWeek - dateObject.getDay() > 2)
                         {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                            {
+                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            }
+                            //console.log(futureDate.toDateString() + " at " + timeTable[j]);
                         }
-                        //console.log(futureDate.toDateString() + " at " + timeTable[j]);
-                    }
-                    else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                    {
-                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                        else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                         {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                            {
+                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            }
                         }
                     }
                 }
@@ -850,20 +853,23 @@ app.get('/datelist', async (req, res) => {
                     }
                     //console.log(dayOfWeek);
                     //console.log(currentDate.getDay());
-                    if (dayOfWeek - dateObject.getDay() > 2)
+                    if (checkDateRange(dateEncoder(dateObject.toDateString() + " at " + timeTable[j]), -7))
                     {
-                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                        if (dayOfWeek - dateObject.getDay() > 2)
                         {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                            {
+                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            }
                         }
-                    }
-                    else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                    {
-                        dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                        if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                        else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
                         {
-                            returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
+                            {
+                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
+                            }
                         }
                     }
                 }
