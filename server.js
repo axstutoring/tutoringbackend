@@ -532,23 +532,8 @@ app.get('/find/appointment', async (req, res) => {
     for (let i = 0; i < feed.length; i++)
     {
         if (user(feed[i].email) === user(req.query.email))
-        {
-            let hour = feed[i].date.substring(19, 24);
-            if (feed[i].date.length === 26)
-            {
-                hour = "0" + feed[i].date.substring(19, 23);
-            }
-            if (feed[i].date.substring(feed[i].date.length - 2, feed[i].date.length) === "PM" && hour.substring(0, 2) !== "12")
-            {
-                let hourNumber = Number(hour.substring(0, 2)) + 12;
-                hour = hourNumber.toString() + hour.substring(2, 5);
-            }
-            const dateTranslator = Date.parse(feed[i].date.substring(4, 15) + ' ' + hour);
-            const todayDate = Date.now();
-
-            const dayLightSavings = checkDaylight();
-            
-            if ((dayLightSavings && (dateTranslator + 25200000) > todayDate) || (!dayLightSavings && (dateTranslator + 28800000) > todayDate))
+        {            
+            if (!checkDateRange(dateEncoder(feed[i].date), 0))
             {
                 for (let j = 0; j < feed2.length; j++)
                 {
