@@ -127,9 +127,8 @@ function checkDaylight()    //return true if it is currently daylight savings ti
     return false;
 }
 
-function checkDateRange(bookDate, days) //returns true if current time is outside the range of the bookDate + days
+function checkDateRange(bookDate, days) //returns true if current time is outside the range of the bookDate + days (days positive)
 {
-    console.log(bookDate);
     const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     dateProcessor = monthList[Number(bookDate[8] + bookDate[9]) - 1] + ' ' + bookDate[10] + bookDate[11] + ' '
@@ -145,14 +144,28 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
         let hourNumber = Number(hour.substring(0, 2)) + 12;
         hour = hourNumber.toString() + hour.substring(2, 5);
     }
-
-    if (checkDaylight())
+    
+    if (days < 0)
     {
-        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
+        if (checkDaylight())
+        {
+            return (((Date.parse(dateProcessor + ' ' + hour) + 25200000) + (days * 86400000)) > Date.now())
+        }
+        else
+        {
+            return (((Date.parse(dateProcessor + ' ' + hour) + 28800000) + (days * 86400000)) > Date.now())
+        }
     }
     else
     {
-        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
+        if (checkDaylight())
+        {
+            return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
+        }
+        else
+        {
+            return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
+        }
     }
 }
 
@@ -785,24 +798,13 @@ app.get('/datelist', async (req, res) => {
                     }
                     //console.log(dayOfWeek);
                     //console.log(currentDate.getDay());
-                    if (checkDateRange(dateEncoder(dateObject.toDateString() + " at " + timeTable[j]), -7))
+                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                    if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                     {
-                        if (dayOfWeek - dateObject.getDay() > 2)
+                        const dateString = dateObject.toDateString() + " at " + timeTable[j];
+                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
                         {
-                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
-                            {
-                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                            }
-                            //console.log(futureDate.toDateString() + " at " + timeTable[j]);
-                        }
-                        else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                        {
-                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
-                            {
-                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                            }
+                            returnArray.push(dateString);
                         }
                     }
                 }
@@ -853,23 +855,13 @@ app.get('/datelist', async (req, res) => {
                     }
                     //console.log(dayOfWeek);
                     //console.log(currentDate.getDay());
-                    if (checkDateRange(dateEncoder(dateObject.toDateString() + " at " + timeTable[j]), -7))
+                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
+                    if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                     {
-                        if (dayOfWeek - dateObject.getDay() > 2)
+                        const dateString = dateObject.toDateString() + " at " + timeTable[j];
+                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
                         {
-                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
-                            {
-                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                            }
-                        }
-                        else if (dayOfWeek - dateObject.getDay() === 2 && dateObject.getHours() < (j*0.25 + 8))
-                        {
-                            dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                            if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
-                            {
-                                returnArray.push(dateObject.toDateString() + " at " + timeTable[j]);
-                            }
+                            returnArray.push(dateString);
                         }
                     }
                 }
