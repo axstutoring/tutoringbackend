@@ -131,41 +131,18 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
 {
     const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    dateProcessor = monthList[Number(bookDate[8] + bookDate[9]) - 1] + ' ' + bookDate[10] + bookDate[11] + ' '
+    const dateProcessor = monthList[Number(bookDate[8] + bookDate[9]) - 1] + ' ' + bookDate[10] + bookDate[11] + ' '
     + bookDate[4] + bookDate[5] + bookDate[6] + bookDate[7];
 
-    let hour = timeTable[Number(bookDate[2] + bookDate[3])];
-    if (hour.length === 7)
-    {
-        hour = '0' + hour;
-    }
-    if (hour.substring(hour.length - 2, hour.length) === "PM" && hour.substring(0, 2) !== "12")
-    {
-        let hourNumber = Number(hour.substring(0, 2)) + 12;
-        hour = hourNumber.toString() + hour.substring(2, 5);
-    }
+    const hour = timeTable[Number(bookDate[2] + bookDate[3])];
     
-    if (days < 0)
+    if (checkDaylight())
     {
-        if (checkDaylight())
-        {
-            return (((Date.parse(dateProcessor + ' ' + hour) + 25200000) + (days * 86400000)) > Date.now())
-        }
-        else
-        {
-            return (((Date.parse(dateProcessor + ' ' + hour) + 28800000) + (days * 86400000)) > Date.now())
-        }
+        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
     }
     else
     {
-        if (checkDaylight())
-        {
-            return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
-        }
-        else
-        {
-            return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
-        }
+        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
     }
 }
 
@@ -398,13 +375,27 @@ app.get('/courselist', async (req, res) => {
 app.get('/tutorlist', async (req, res) => {
     const feed = await Post.find();
 
+    let processArray = new Array;
     let returnArray = new Array;
     for (let i = 0; i < feed.length; i++)
     {
         if ((feed[i].subject.includes(req.query.series)) && feed[i].maximumHours > 0)
         {
-            returnArray.push(feed[i].member);
+            processArray.push(feed[i]);
         }
+    }
+
+    processArray.sort((a, b) => {
+        if (a.maximumHours - a.booking.length / 13 > b.maximumHours - b.booking.length / 13)
+        {
+            return -1;
+        }
+        return 1;
+    });
+
+    for (let i = 0; i < processArray.length; i++)
+    {
+        returnArray.push(processArray[i].member);
     }
 
     res.json(returnArray);
@@ -533,136 +524,49 @@ app.get('/find/appointment', async (req, res) => {
     {
         if (user(feed[i].email) === user(req.query.email))
         {            
-            if (!checkDateRange(dateEncoder(feed[i].date), 0))
+            for (let j = 0; j < feed2.length; j++)
             {
-                for (let j = 0; j < feed2.length; j++)
+                if (feed2[j].course === feed[i].subject)
                 {
-                    if (feed2[j].course === feed[i].subject)
+                    for (let k = feed2[j].subjectDivision.length - 1; k >= 0; k--)
                     {
-                        for (let k = feed2[j].subjectDivision.length - 1; k >= 0; k--)
+                        if (feed2[j].subjectDivision[k])
                         {
-                            if (feed2[j].subjectDivision[k])
+                            if (!checkDateRange(dateEncoder(feed[i].date), 0))
                             {
                                 const template = [feed[i].student, feed[i].email, feed[i].tutor, 
-                                                    feed[i].subject, feed[i].date, k, feed[i].timestamp];
+                                                feed[i].subject, feed[i].date, k, feed[i].timestamp];
                                 upcomingAppointment.push(template);
-                                break;
                             }
-                        }
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                for (let j = 0; j < feed2.length; j++)
-                {
-                    if (feed2[j].course === feed[i].subject)
-                    {
-                        for (let k = feed2[j].subjectDivision.length - 1; k >= 0; k--)
-                        {
-                            if (feed2[j].subjectDivision[k])
+                            else
                             {
                                 const template = [feed[i].student, feed[i].email, feed[i].tutor, 
-                                                    feed[i].subject, feed[i].date, k];
-                                //console.log(template);
+                                                feed[i].subject, feed[i].date, k];
                                 pastAppointment.push(template);
-                                break;
                             }
+                            break;
                         }
-                        break;
                     }
+                    break;
                 }
             }
         }
     }
     upcomingAppointment.sort((a, b) => {
-        firstDate = Date.parse(a[4].substring(4, 15));
-        secondDate = Date.parse(b[4].substring(4, 15));
-        //console.log(firstDate);
-        //console.log(secondDate);
+        firstDate = Date.parse(a[4].substring(4, 15) + a[4].substring(18, a[4].length));
+        secondDate = Date.parse(b[4].substring(4, 15) + b[4].substring(18, b[4].length));
         if (firstDate > secondDate)
         {
             return 1;
-        }
-        else
-        {
-            if (firstDate === secondDate)
-            {
-                //console.log(a.substring(a.length - 2, a.length));
-                //console.log(b.substring(b.length - 2, b.length));
-                if (a[4].substring(a[4].length - 2, a[4].length) > b[4].substring(b[4].length - 2, b[4].length))
-                {
-                    return 1;
-                }
-                else
-                {
-                    if (a[4].substring(a[4].length - 2, a[4].length) === b[4].substring(b[4].length - 2, b[4].length))
-                    {
-                        let firstHour = a[4].substring(19, 24);
-                        let secondHour = b[4].substring(19, 24);
-                        if (a[4].length === 26)
-                        {
-                            firstHour = "0" + a[4].substring(19, 23);
-                        }
-                        if (b[4].length === 26)
-                        {
-                            secondHour = "0" + b[4].substring(19, 23);
-                        }
-                        //console.log(firstHour);
-                        //console.log(secondHour);
-                        if (firstHour > secondHour)
-                        {
-                            return 1;
-                        }
-                    }
-                }
-            }
         }
         return -1;
     })
     pastAppointment.sort((a, b) => {
-        firstDate = Date.parse(a[4].substring(4, 15));
-        secondDate = Date.parse(b[4].substring(4, 15));
-        //console.log(firstDate);
-        //console.log(secondDate);
+        firstDate = Date.parse(a[4].substring(4, 15) + a[4].substring(18, a[4].length));
+        secondDate = Date.parse(b[4].substring(4, 15) + b[4].substring(18, b[4].length));
         if (firstDate > secondDate)
         {
             return 1;
-        }
-        else
-        {
-            if (firstDate === secondDate)
-            {
-                //console.log(a.substring(a.length - 2, a.length));
-                //console.log(b.substring(b.length - 2, b.length));
-                if (a[4].substring(a[4].length - 2, a[4].length) > b[4].substring(b[4].length - 2, b[4].length))
-                {
-                    return 1;
-                }
-                else
-                {
-                    if (a[4].substring(a[4].length - 2, a[4].length) === b[4].substring(b[4].length - 2, b[4].length))
-                    {
-                        let firstHour = a[4].substring(19, 24);
-                        let secondHour = b[4].substring(19, 24);
-                        if (a[4].length === 26)
-                        {
-                            firstHour = "0" + a[4].substring(19, 23);
-                        }
-                        if (b[4].length === 26)
-                        {
-                            secondHour = "0" + b[4].substring(19, 23);
-                        }
-                        //console.log(firstHour);
-                        //console.log(secondHour);
-                        if (firstHour > secondHour)
-                        {
-                            return 1;
-                        }
-                    }
-                }
-            }
         }
         return -1;
     })
@@ -746,8 +650,21 @@ app.get('/datelist', async (req, res) => {
         loopObject = new Date(Date.now() - 28800000);
     }
 
-    for (let i = loopObject.getDay() + 1; i < 7; i++)
+    let firstLoop = true;
+    let iterator = loopObject.getDay() + 1;
+
+    while (true)
     {
+        if (iterator === loopObject.getDay() + 1 && !firstLoop)
+        {
+            break;
+        }
+        if (firstLoop && iterator === 7)
+        {
+            iterator = 0;
+            firstLoop = false;
+        }
+        let i = iterator;
         for (let j = 0; j < 48; j++)
         {
             if (week[i][j])
@@ -787,7 +704,7 @@ app.get('/datelist', async (req, res) => {
                     if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                     {
                         const dateString = dateObject.toDateString() + " at " + timeTable[j];
-                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
+                        if (!checkDateRange(dateEncoder(dateString), -2) && checkDateRange(dateEncoder(dateString), -7))
                         {
                             returnArray.push(dateString);
                         }
@@ -795,63 +712,7 @@ app.get('/datelist', async (req, res) => {
                 }
             }
         }
-    }
-
-
-    loopObject = new Date(Date.now() - 25200000);
-    if (!dayLightSavings)
-    {
-        loopObject = new Date(Date.now() - 28800000);
-    }
-
-    for (let i = 0; i < loopObject.getDay() + 1; i++)
-    {
-        for (let j = 0; j < 48; j++)
-        {
-            if (week[i][j])
-            {
-                if (j > 44)
-                {
-                    break;
-                }
-                let check = false;
-                for (k = 0; k < 4; k++)
-                {
-                    if (!week[i][j+k])
-                    {
-                        check = true;
-                        break;
-                    }
-                }
-                if (!check)
-                {
-                    let dayOfWeek = i;
-                    //console.log(i);
-                    let dateObject = new Date(Date.now() - 25200000);
-                    if (!dayLightSavings)
-                    {
-                        dateObject = new Date(Date.now() - 28800000);
-                    }
-                    //console.log(dayOfWeek);
-                    //console.log(currentDate.getDay());
-                    if (dateObject.getDay() >= dayOfWeek)
-                    {
-                        dayOfWeek += 7;
-                    }
-                    //console.log(dayOfWeek);
-                    //console.log(currentDate.getDay());
-                    dateObject.setDate(dayOfWeek - dateObject.getDay() + dateObject.getDate());
-                    if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
-                    {
-                        const dateString = dateObject.toDateString() + " at " + timeTable[j];
-                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
-                        {
-                            returnArray.push(dateString);
-                        }
-                    }
-                }
-            }
-        }
+        iterator++;
     }
     //console.log(week);
 
