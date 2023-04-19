@@ -650,33 +650,22 @@ app.get('/datelist', async (req, res) => {
         loopObject = new Date(Date.now() - 28800000);
     }
 
-    let firstLoop = true;
     let iterator = loopObject.getDay() + 1;
 
-    while (true)
+    for (let i = 0; i < 7; i++)
     {
-        if (iterator === loopObject.getDay() + 1 && !firstLoop)
-        {
-            break;
-        }
-        if (firstLoop && iterator === 7)
+        if (iterator === 7)
         {
             iterator = 0;
-            firstLoop = false;
         }
-        let i = iterator;
-        for (let j = 0; j < 48; j++)
+        for (let j = 0; j < 45; j++)
         {
-            if (week[i][j])
+            if (week[iterator][j])
             {
-                if (j > 44)
-                {
-                    break;
-                }
                 let check = false;
                 for (k = 0; k < 4; k++)
                 {
-                    if (!week[i][j+k])
+                    if (!week[iterator][j+k])
                     {
                         check = true;
                         break;
@@ -684,8 +673,8 @@ app.get('/datelist', async (req, res) => {
                 }
                 if (!check)
                 {
-                    let dayOfWeek = i;
-                    //console.log(i);
+                    let dayOfWeek = iterator;
+                    //console.log(iterator);
                     let dateObject = new Date(Date.now() - 25200000);
                     if (!dayLightSavings)
                     {
