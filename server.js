@@ -127,7 +127,7 @@ function checkDaylight()    //return true if it is currently daylight savings ti
     return false;
 }
 
-function checkDateRange(bookDate, days) //returns true if current time is outside the range of the bookDate + days (days positive)
+function checkDateRange(bookDate, days) //returns true if current time is within the range of the bookDate + days (days positive)
 {
     const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -138,11 +138,11 @@ function checkDateRange(bookDate, days) //returns true if current time is outsid
     
     if (checkDaylight())
     {
-        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 25200000) < Date.now())
+        return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 25200000) > Date.now())
     }
     else
     {
-        return (((Date.parse(dateProcessor + ' ' + hour) + days*86400000) + 28800000) < Date.now())
+        return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 28800000) > Date.now())
     }
 }
 
@@ -185,6 +185,8 @@ app.get('/checkemail', async (req, res) => {
                     bookingsThisWeek++;
                 }
             }
+            console.log(updatedString);
+            console.log(bookingsThisWeek);
             const post = await Email.findByIdAndUpdate(feed[i]._id, {
                 bookings: updatedString,
             }, { new: true });
@@ -532,7 +534,7 @@ app.get('/find/appointment', async (req, res) => {
                     {
                         if (feed2[j].subjectDivision[k])
                         {
-                            if (!checkDateRange(dateEncoder(feed[i].date), 0))
+                            if (checkDateRange(dateEncoder(feed[i].date), 0))
                             {
                                 const template = [feed[i].student, feed[i].email, feed[i].tutor, 
                                                 feed[i].subject, feed[i].date, k, feed[i].timestamp];
@@ -608,11 +610,11 @@ app.get('/datelist', async (req, res) => {
             for (let j = 0; j < feed[i].booking.length; j+= 13)
             {
                 let bookingString = feed[i].booking.substring(j, j + 13);
-                if (!checkDateRange(bookingString, 0))
+                if (checkDateRange(bookingString, 0))
                 {
                     comparisonString += bookingString;
                 }
-                if (!checkDateRange(bookingString, 5))
+                if (checkDateRange(bookingString, 5))
                 {
                     savedString += bookingString;
                 }
@@ -693,7 +695,7 @@ app.get('/datelist', async (req, res) => {
                     if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                     {
                         const dateString = dateObject.toDateString() + " at " + timeTable[j];
-                        if (!checkDateRange(dateEncoder(dateString), -2) && checkDateRange(dateEncoder(dateString), -7))
+                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
                         {
                             returnArray.push(dateString);
                         }
