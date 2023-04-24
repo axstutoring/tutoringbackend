@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-connection = "mongodb+srv://KevinTang:0hmlsVIAJwbjWuTf@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";//2xvy-BTPm7zNyvj
+connection = "mongodb+srv://KevinTang:oQwp2NrkMjmX9AWo@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";//2xvy-BTPm7zNyvj
 const crypto = require('crypto-js');
 
 const tutoringChairs = "Arthur Huang and Claire Luong";
@@ -139,14 +139,28 @@ function checkDateRange(bookDate, days) //returns true if current time is within
     + bookDate[4] + bookDate[5] + bookDate[6] + bookDate[7];
 
     const hour = timeTable[Number(bookDate[2] + bookDate[3])];
-    
-    if (checkDaylight())
+
+    if (days !== 100)
     {
-        return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 25200000) > Date.now())
+        if (checkDaylight())
+        {
+            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 25200000) > Date.now())
+        }
+        else
+        {
+            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 28800000) > Date.now())
+        }
     }
     else
     {
-        return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 28800000) > Date.now())
+        if (checkDaylight())
+        {
+            return ((Date.now() - (Date.parse(dateProcessor + ' ' + hour) + 25200000)) / 86400000)
+        }
+        else
+        {
+            return ((Date.now() - (Date.parse(dateProcessor + ' ' + hour) + 28800000)) / 86400000)
+        }
     }
 }
 
@@ -389,6 +403,20 @@ app.get('/tutorlist', async (req, res) => {
         {
             processArray.push(feed[i]);
         }
+    }
+
+    for (let i = 0; i < processArray.length; i++)
+    {
+        let savedString = "";
+        for (let j = 0; j < processArray[i].booking.length; j += 13)
+        {
+            let bookingString = processArray[i].booking.substring(j, j + 13);
+            if (checkDateRange(bookingString, 5))
+            {
+                savedString += bookingString;
+            }
+        }
+        processArray[i].booking = savedString;
     }
 
     processArray.sort((a, b) => {
@@ -647,6 +675,26 @@ app.get('/datelist', async (req, res) => {
     }
 
     //console.log(week);
+    let furthestDay = -8;
+    if (savedString.length / 13 < maxHours)
+    {
+        furthestDay = -2;
+    }
+    else if (savedString.length / 13 === maxHours)
+    {
+        for (let i = 0; i < savedString.length; i+=13)
+        {
+            if (checkDateRange(savedString.substring(i, i + 13), 100) > furthestDay)
+            {
+                furthestDay = checkDateRange(savedString.substring(i, i + 13), 100);
+            }
+        }
+        furthestDay -= 7;
+        if (furthestDay > -2)
+        {
+            furthestDay = -2;
+        }
+    }
 
     const dayLightSavings = checkDaylight();
 
@@ -699,7 +747,7 @@ app.get('/datelist', async (req, res) => {
                     if ((dayOffStart >= Date.parse(dateObject)) || (Date.parse(dateObject) >= dayOffEnd))
                     {
                         const dateString = dateObject.toDateString() + " at " + timeTable[j];
-                        if (checkDateRange(dateEncoder(dateString), -2) && !checkDateRange(dateEncoder(dateString), -7))
+                        if (checkDateRange(dateEncoder(dateString), furthestDay) && !checkDateRange(dateEncoder(dateString), -7))
                         {
                             returnArray.push(dateString);
                         }
@@ -710,11 +758,6 @@ app.get('/datelist', async (req, res) => {
         iterator++;
     }
     //console.log(week);
-
-    if (savedString.length / 13 >= maxHours)
-    {
-        returnArray = [];
-    }
 
     res.json(returnArray);
 })
@@ -733,7 +776,22 @@ app.post('/request/new', async (req, res) => {
         {
             memberEmail = feed[i].email;
             const id = feed[i]._id;
-            const booking = feed[i].booking;
+            let booking = feed[i].booking;
+            if (feed[i].booking.length / 13 === feed[i].maximumHours)
+            {
+                let smallestDayRange = 12;
+                let bookmark = 0;
+                for (let j = 0; j < feed[i].booking.length; j += 13)
+                {
+                    const dayRange = checkDateRange(feed[i].booking.substring(j, j + 13), 100) - checkDateRange(dateProcessor, 100);
+                    if(dayRange > 7 && dayRange < smallestDayRange)
+                    {
+                        smallestDayRange = dayRange;
+                        bookmark = j;
+                    }
+                }
+                booking = booking.replace(booking.slice(bookmark, bookmark + 13), "");
+            }
             try {
                 const post = await Post.findByIdAndUpdate(id, {
                     booking: booking + dateProcessor,
