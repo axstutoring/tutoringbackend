@@ -2,8 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-connection = "mongodb+srv://KevinTang:oQwp2NrkMjmX9AWo@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";//2xvy-BTPm7zNyvj
-//const Dotenv = require("dotenv").config(); //uncomment this line if trying to run code locally and create a .env file containing the PASSWORD
+const Dotenv = require("dotenv").config(); //uncomment this line if trying to run code locally and create a .env file containing the passwords
+connection = "mongodb+srv://KevinTang:" + process.env.M_PASSWORD + "@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";
 
 const tutoringChairs = "Arthur Huang and Claire Luong";
 
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport( {
     service: "Zoho",
     auth: {
         user: "axstutoring@zohomail.com",
-        pass: process.env.PASSWORD
+        pass: process.env.E_PASSWORD
     }
 });
 
