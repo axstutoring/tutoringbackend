@@ -2,12 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const Dotenv = require("dotenv").config(); //uncomment this line if trying to run code locally and create a .env file containing the passwords
+const Dotenv = require("dotenv").config(); //create a .env file containing the passwords if running code locally
 connection = "mongodb+srv://KevinTang:" + process.env.M_PASSWORD + "@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";
 
 const tutoringChairs = "Arthur Huang and Claire Luong";
-
-/*const transporter = nodemailer.createTransport( {service: "hotmail",auth: {user: "axstutoring@outlook.com",pass: "B4y27*Zct,3.Nw/"}});*/
 
 const transporter = nodemailer.createTransport( {
     service: "Zoho",
