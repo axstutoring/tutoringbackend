@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
 const Dotenv = require("dotenv").config(); //create a .env file containing the passwords if running code locally
-connection = "mongodb+srv://KevinTang:" + process.env.M_PASSWORD + "@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";
+const connection = "mongodb+srv://KevinTang:" + process.env.M_PASSWORD + "@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";
 
 const tutoringChairs = "Arthur Huang and Claire Luong";
 
@@ -141,11 +141,11 @@ function checkDateRange(bookDate, days) //returns true if current time is within
     {
         if (checkDaylight())
         {
-            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 25200000) > Date.now())
+            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 25200000) >= Date.now())
         }
         else
         {
-            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 28800000) > Date.now())
+            return ((Date.parse(dateProcessor + ' ' + hour) + (days*86400000) + 28800000) >= Date.now())
         }
     }
     else
@@ -846,7 +846,7 @@ app.post('/request/new', async (req, res) => {
     const message1 = "Dear " + req.body.student + ",\n\nThis is a confirmation of your request for tutoring with " 
     + req.body.tutor + " on " + req.body.date + " for " + req.body.subject + ". Please email them" +  
     " the materials that you would like to go over 24 hours before the scheduled appointment time at " + memberEmail +
-    ". It is IMPORTANT that you email your tutor to determine a method/location to meet for the tutoring session." + 
+    ". It is IMPORTANT that you email your tutor to set a method/location for the tutoring session." + 
     "\n\nAppointment ID: " + (post._id.toString()).substring((post._id.toString()).length - 5, (post._id.toString()).length) +
     "\n\nThank you for choosing AXS Tutoring.\n\nSincerely,\n" + tutoringChairs
     + "\n\n[Do not reply to this email. For all inquiries please contact us at tutoring.axsbg@gmail.com]";
