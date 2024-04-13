@@ -176,7 +176,7 @@ app.get('/startup', async (req, res) => {
 })
 
 app.get('/checkemail', async (req, res) => {
-    const feed = await Email.find();
+    const feed = await Email.find( {email: user(req.query.email) } );
     let flag = 1;
     let username = user(req.query.email);
     for (let i = 0; i < feed.length; i++)
@@ -219,7 +219,7 @@ app.get('/checkemail', async (req, res) => {
 })
 
 app.get('/checkcode', async (req, res) => {
-    const feed = await Email.find();
+    const feed = await Email.find( {email: user(req.query.email) } );
 
     let flag = false;
     let username = user(req.query.email);
@@ -246,7 +246,7 @@ app.get('/checkcode', async (req, res) => {
 })
 
 app.put('/email/new', async (req, res) => {
-    const feed = await Email.find();
+    const feed = await Email.find( {email: user(req.body.email) } );
 
     let code = "";
 
@@ -427,9 +427,9 @@ app.get('/tutorlist', async (req, res) => {
 })
 
 app.delete('/find/appointment/info', async (req, res) => {
-    const feed = await Request.find();
-    const feed1 = await Email.find();
-    const feed2 = await Post.find();
+    const feed = await Request.find( { timestamp: req.query.info[6] } );
+    const feed1 = await Email.find( {email: user(req.query.info[1]) } );
+    const feed2 = await Post.find( {member: req.query.info[2]} );
 
     let response = false;
 
@@ -537,7 +537,10 @@ app.delete('/find/appointment/info', async (req, res) => {
 })
 
 app.get('/find/appointment', async (req, res) => {
-    const feed = await Request.find();
+    const feed = await Request.find( {email: user(req.query.email) + "@ucla.edu"} );
+    const feed101 = await Request.find( {email: user(req.query.email) + "@g.ucla.edu"} );
+
+    feed.push(...feed101);
 
     const feed2 = await Course.find();
 
@@ -586,7 +589,7 @@ app.get('/find/appointment', async (req, res) => {
         }
         return -1;
     })
-    pastAppointment.sort((a, b) => {
+    pastAppointment.sort((b, a) => {
         firstDate = Date.parse(a[4].substring(4, 15) + a[4].substring(18, a[4].length));
         secondDate = Date.parse(b[4].substring(4, 15) + b[4].substring(18, b[4].length));
         if (firstDate > secondDate)
@@ -601,7 +604,7 @@ app.get('/find/appointment', async (req, res) => {
 })
 
 app.get('/datelist', async (req, res) => {
-    const feed = await Post.find();
+    const feed = await Post.find( {member: req.query.memberName} );
 
     let week = new Array;
 
@@ -755,7 +758,7 @@ app.get('/datelist', async (req, res) => {
 
 app.post('/request/new', async (req, res) => {
 
-    const feed = await Post.find();
+    const feed = await Post.find( {member: req.body.tutor} );
 
     let memberEmail = "";
 
@@ -799,7 +802,7 @@ app.post('/request/new', async (req, res) => {
     }
     const post = new Request({
         student: req.body.student,
-        email: req.body.email,
+        email: req.body.email.toLowerCase(),
         phone: req.body.phone,
         request: req.body.request,
         tutor: req.body.tutor,
@@ -868,7 +871,7 @@ app.post('/request/new', async (req, res) => {
         });
     })
 
-    const feed1 = await Email.find();
+    const feed1 = await Email.find( {email: user(req.body.email) } );
 
     let username = user(req.body.email);
 
