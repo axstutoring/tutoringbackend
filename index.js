@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const Dotenv = require("dotenv").config(); //create a .env file containing the passwords if running code locally
 const connection = "mongodb+srv://KevinTang:" + process.env.M_PASSWORD + "@axs-tutoring.c24c5cd.mongodb.net/?retryWrites=true&w=majority";
 
-const tutoringChairs = "Julian Fiore and Sophia Harvey";
+const tutoringChairs = "Jasmine Winter and Melika Zarei";
 
 const transporter = nodemailer.createTransport( {
     service: "Zoho",
