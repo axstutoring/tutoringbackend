@@ -819,7 +819,7 @@ app.post('/request/new', async (req, res) => {
     + "Phone: " + req.body.phone + "\n"
     + "Request: " + req.body.request + "\n"
     + "\nSincerely,\n" + tutoringChairs + "\n"
-    + "\n[The student was given your contact information and should be reaching out by email no less than 24 hours before the scheduled appointment]";
+    + "\n[For confidentiality reasons, we are no longer providing the student your contact details. Please reach out to them at least 24 hours before the appointment to schedule a session]";
 
     const options = {
         from: "axstutoring@zohomail.com",
