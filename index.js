@@ -819,7 +819,7 @@ app.post('/request/new', async (req, res) => {
     + "Phone: " + req.body.phone + "\n"
     + "Request: " + req.body.request + "\n"
     + "\nSincerely,\n" + tutoringChairs + "\n"
-    + "\n[For confidentiality reasons, we are no longer providing the student your contact details. Please reach out to them at least 24 hours before the appointment to schedule a session]";
+    + "\n[The student was given your contact information and should be reaching out by email no less than 24 hours before the scheduled appointment]";
 
     const options = {
         from: "axstutoring@zohomail.com",
@@ -843,7 +843,9 @@ app.post('/request/new', async (req, res) => {
     })
 
     const message1 = "Dear " + req.body.student + ",\n\nThis is a confirmation of your request for tutoring with " 
-    + req.body.tutor + " on " + req.body.date + " for " + req.body.subject + ". Your tutor will reach out to set a method/location for the tutoring session." +   
+    + req.body.tutor + " on " + req.body.date + " for " + req.body.subject + ". Please email them" +  
+    " the materials that you would like to go over 24 hours before the scheduled appointment time at " + memberEmail +
+    ". It is IMPORTANT that you email your tutor to set a method/location for the tutoring session." + 
     "\n\nAppointment ID: " + (post._id.toString()).substring((post._id.toString()).length - 5, (post._id.toString()).length) +
     "\n\nThank you for choosing AXS Tutoring.\n\nSincerely,\n" + tutoringChairs
     + "\n\n[Do not reply to this email. For all inquiries please contact us at tutoring.axsbg@gmail.com]";
